@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Game</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #333; }
+        canvas { background-color: #eee; display: block; margin: 20px auto; border: 1px solid #000; }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Player properties
+        let player = {
+            x: 50,
+            y: 50,
+            width: 20,
+            height: 20,
+            color: 'blue',
+            speed: 5
+        };
+
+        // Obstacles
+        let obstacles = [
+            { x: 200, y: 150, width: 30, height: 50, color: 'red', dx: 2, dy: 1 },
+            { x: 400, y: 300, width: 60, height: 20, color: 'green', dx: -1, dy: 2 }
+        ];
+
+        // Non-moving obstacle
+        let staticObstacle = null;
+
+        // Exit
+        let exit = {
+            x: 700,
+            y: 500,
+            width: 50,
+            height: 50,
+            color: 'purple'
+        };
+
+        let gameWon = false;
+
+        // Keyboard input
+        let keys = {};
+        window.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+        });
+        window.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+
+        // Mouse click for static obstacle
+        canvas.addEventListener('click', (e) => {
+            if (!staticObstacle) {
+                staticObstacle = {
+                    x: e.offsetX - 25, // Center the obstacle on the click
+                    y: e.offsetY - 25,
+                    width: 50,
+                    height: 50,
+                    color: 'orange'
+                };
+            }
+        });
+
+        function updatePlayer() {
+            if (keys['ArrowUp'] || keys['w']) {
+                player.y -= player.speed;
+            } else if (keys['ArrowDown'] || keys['s']) {
+                player.y += player.speed;
+            }
+
+            if (keys['ArrowLeft'] || keys['a']) {
+                player.x -= player.speed;
+            } else if (keys['ArrowRight'] || keys['d']) {
+                player.x += player.speed;
+            }
+
+            // Keep player within canvas bounds
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+            if (player.y < 0) player.y = 0;
+            if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+        }
+
+        function updateObstacles() {
+            obstacles.forEach(obstacle => {
+                obstacle.x += obstacle.dx;
+                obstacle.y += obstacle.dy;
+
+                // Wrap obstacles around the canvas
+                if (obstacle.x < -obstacle.width) {
+                    obstacle.x = canvas.width;
+                } else if (obstacle.x > canvas.width) {
+                    obstacle.x = -obstacle.width;
+                }
+
+                if (obstacle.y < -obstacle.height) {
+                    obstacle.y = canvas.height;
+                } else if (obstacle.y > canvas.height) {
+                    obstacle.y = -obstacle.height;
+                }
+            });
+        }
+
+        function checkWinCondition() {
+            // Check if player is within the exit area
+            if (player.x < exit.x + exit.width &&
+                player.x + player.width > exit.x &&
+                player.y < exit.y + exit.height &&
+                player.y + player.height > exit.y) {
+                gameWon = true;
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+
+            // Draw player
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+
+            // Draw obstacles
+            obstacles.forEach(obstacle => {
+                ctx.fillStyle = obstacle.color;
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            });
+
+            // Draw static obstacle if it exists
+            if (staticObstacle) {
+                ctx.fillStyle = staticObstacle.color;
+                ctx.fillRect(staticObstacle.x, staticObstacle.y, staticObstacle.width, staticObstacle.height);
+            }
+
+            // Draw exit
+            ctx.fillStyle = exit.color;
+            ctx.fillRect(exit.x, exit.y, exit.width, exit.height);
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(exit.x, exit.y, exit.width, exit.height);
+
+            // Display win message
+            if (gameWon) {
+                ctx.font = '48px Arial';
+                ctx.fillStyle = 'black';
+                ctx.textAlign = 'center';
+                ctx.fillText('You Won!', canvas.width / 2, canvas.height / 2);
+            }
+        }
+
+        function gameLoop() {
+            if (!gameWon) {
+                updatePlayer();
+                updateObstacles();
+                checkWinCondition();
+            }
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop(); // Start the game loop
+    </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+/* External Stylesheet */
+body {
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif, sans-serif;
+  margin: 50px;
+  background-color: #f4bbbb;
+}
+.highlight {
+  background-color: lightyellow;
+  padding: 5px;
+  border-left: 4px solid orange;
+}
+.fav-section {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+#homepage {
+  background-image: url(Images/courage-cowardly-dog-cartoon.webp);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+
+
