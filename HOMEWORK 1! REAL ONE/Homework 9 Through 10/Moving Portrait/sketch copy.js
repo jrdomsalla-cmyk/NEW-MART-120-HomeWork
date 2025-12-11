@@ -17,11 +17,11 @@ let sizeDirection = 1;
 let sizeCounter = 0;
 
 // Variables for hand movement
-let leftHandY; // Y position for the left hand (will move on Y axis)
+let leftHandY; // Y position for the left hand (Y-axis)
 let leftHandDirectionY = 1;
 let leftHandSpeedY;
 
-let rightHandX; // X position for the right hand (will move on X axis)
+let rightHandX; // X position for the right hand (X-axis)
 let rightHandDirectionX = 1;
 let rightHandSpeedX;
 
